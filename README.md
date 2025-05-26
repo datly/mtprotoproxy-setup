@@ -1,38 +1,38 @@
 
-# Hướng Dẫn Setup MTProtoProxy
+# MTProtoProxy Setup Guide
 
-MTProtoProxy là một proxy server hỗ trợ giao thức MTProto của Telegram, giúp người dùng truy cập Telegram thông suốt hơn ở những khu vực bị hạn chế.
+**MTProtoProxy** is a proxy server that supports Telegram's MTProto protocol, allowing users to access Telegram more smoothly in regions with restrictions.
 
 ---
 
-## Bước 1: Cập nhật hệ thống
+## Step 1: Update the System
 
 ```bash
 sudo apt update
 ```
 
-## Bước 2: Cài đặt các gói cần thiết
+## Step 2: Install Required Packages
 
 ```bash
 sudo apt install git python3 python3-pip -y
 ```
 
-## Bước 3: Clone mã nguồn MTProtoProxy
+## Step 3: Clone the MTProtoProxy Source Code
 
 ```bash
 git clone https://github.com/alexbers/mtprotoproxy.git
 cd mtprotoproxy
 ```
 
-## Bước 4: Cập nhật tệp `requirements.txt`
+## Step 4: Update the `requirements.txt` File
 
-Tạo hoặc chỉnh sửa file `requirements.txt` để thêm các thư viện cần thiết:
+Create or edit the `requirements.txt` file to add the required libraries:
 
 ```bash
 vi requirements.txt
 ```
 
-Nội dung bên trong `requirements.txt`:
+Contents of `requirements.txt`:
 
 ```
 aiohttp
@@ -40,31 +40,31 @@ pysocks
 configparser
 ```
 
-## Bước 5: Cài đặt thư viện Python phụ thuộc
+## Step 5: Install Python Dependencies
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-## Bước 6: Kiểm tra chạy thử proxy
+## Step 6: Test Run the Proxy
 
 ```bash
 python3 mtprotoproxy.py
 ```
 
-> **Lưu ý:** Bạn có thể cần cấu hình thêm file `config.ini` để thiết lập token và cổng proxy nếu dùng trong môi trường thực tế.
+> **Note:** You may need to further configure the `config.ini` file to set up tokens and proxy ports for production environments.
 
 ---
 
-## Bước 7: Tạo systemd service để chạy MTProtoProxy như một dịch vụ nền
+## Step 7: Create a systemd Service to Run MTProtoProxy in the Background
 
-Tạo file service:
+Create the service file:
 
 ```bash
 sudo vi /etc/systemd/system/mtproxy.service
 ```
 
-Nội dung bên trong:
+Contents of the file:
 
 ```ini
 [Unit]
@@ -80,9 +80,9 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-> 📌 **Chú ý:** Đảm bảo đường dẫn `WorkingDirectory` và `ExecStart` đúng với vị trí cài đặt thực tế trên máy bạn.
+> 📌 **Note:** Make sure the `WorkingDirectory` and `ExecStart` paths match the actual installation location on your system.
 
-## Bước 8: Kích hoạt và khởi động dịch vụ
+## Step 8: Enable and Start the Service
 
 ```bash
 sudo systemctl daemon-reload
@@ -90,13 +90,13 @@ sudo systemctl enable mtproxy
 sudo systemctl start mtproxy
 ```
 
-## Bước 9: Kiểm tra trạng thái dịch vụ
+## Step 9: Check Service Status
 
 ```bash
 sudo systemctl status mtproxy
 ```
 
-## Bước 10: Xem log hoạt động của proxy
+## Step 10: View Proxy Logs
 
 ```bash
 journalctl -u mtproxy -f
@@ -104,43 +104,38 @@ journalctl -u mtproxy -f
 
 ---
 
+## Step 11: Example `config.ini` Configuration
 
-
----
-
-## Bước 11: Ví dụ cấu hình file `config.ini`
-
-Trước khi chạy proxy thực tế, bạn nên tạo file `config.ini` để cấu hình chi tiết:
+Before running the proxy in a production setting, create a `config.ini` file for detailed configuration:
 
 ```ini
-PORT = 443  # Cổng lắng nghe
+PORT = 443  # Listening port
 
 USERS = {
-    # 'tên_người_dùng': 'secret_hex_32_ký_tự'
+    # 'username': '32_character_secret_hex'
     'user1': '0123456789abcdef0123456789abcdef',
     'user2': 'abcdefabcdefabcdefabcdefabcdefab',
 }
 
-# Fake TLS domain (tuỳ chọn, dùng để tránh DPI)
+# Fake TLS domain (optional, helps bypass DPI)
 TLS_DOMAIN = 'www.google.com'
 
-# Log ra console
+# Log to console
 LOG_TO_CONSOLE = True
 
-# Giới hạn số client từ 1 IP
+# Limit number of clients per IP
 CLIENTS_PER_USER = 100
 
-# Timeout nếu client không gửi gì
+# Timeout if client sends nothing
 IDLE_TIMEOUT = 300
 
-# Chặn IP (tuỳ chọn)
+# Block specific IPs (optional)
 # BLOCKED_IPS = ['192.168.1.100', '10.0.0.0/24']
-
 ```
 
-### Tạo secret ngẫu nhiên
+### Generate a Random Secret
 
-Bạn có thể tạo một `secret` bằng lệnh sau:
+You can generate a `secret` using the following command:
 
 ```bash
 openssl rand -hex 16
@@ -148,7 +143,6 @@ openssl rand -hex 16
 
 ---
 
-## Tài Nguyên Tham Khảo
+## Reference Resources
 
-- Repository chính thức: [https://github.com/alexbers/mtprotoproxy](https://github.com/alexbers/mtprotoproxy)
-
+- Official repository: [https://github.com/alexbers/mtprotoproxy](https://github.com/alexbers/mtprotoproxy)
